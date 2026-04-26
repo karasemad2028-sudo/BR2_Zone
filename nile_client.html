@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>𓆣 The Nile</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-font-smoothing:antialiased}
+:root{
+  --deep:#0a0e1a;--water:#111827;--mid:#1a2740;--panel:#0d1520;
+  --border:rgba(201,168,76,0.15);--gold:#c9a84c;--gold-light:#e8c97e;
+  --sand:#e8e0d0;--muted:#7a8aaa;--accent:#4a90c4;
+  --online:#3db870;--danger:#c44a4a;--radius:10px;
+}
+body{font-family:'Nunito',sans-serif;background:var(--deep);color:var(--sand);height:100vh;overflow:hidden;display:flex;align-items:center;justify-content:center}
+
+/* ─── SCREENS ─────────────────────────── */
+.screen{display:none;width:100%;height:100vh}
+.screen.active{display:flex}
+
+/* ─── AUTH SCREEN ─────────────────────── */
+#auth-screen{
+  align-items:center;justify-content:center;
+  background:radial-gradient(ellipse at 50% 80%, #1a2740 0%, #0a0e1a 70%);
+  flex-direction:column;
+}
+.auth-logo{font-size:3.5rem;line-height:1;margin-bottom:.5rem;filter:drop-shadow(0 0 20px rgba(201,168,76,.4))}
+.auth-title{font-family:'Cinzel',serif;font-size:2rem;color:var(--gold);letter-spacing:4px;margin-bottom:.3rem}
+.auth-sub{color:var(--muted);font-size:.8rem;letter-spacing:1px;margin-bottom:2rem;font-style:italic}
+
+.auth-card{
+  background:rgba(17,24,39,.9);border:1px solid var(--border);
+  border-radius:16px;padding:2rem 2.5rem;width:360px;
+  backdrop-filter:blur(12px);
+}
+.auth-tabs{display:flex;gap:0;margin-bottom:1.5rem;border-radius:8px;overflow:hidden;border:1px solid var(--border)}
+.auth-tab{flex:1;padding:.5rem;background:none;border:none;color:var(--muted);font-family:'Nunito',sans-serif;font-size:.85rem;cursor:pointer;transition:all .2s}
+.auth-tab.active{background:rgba(201,168,76,.15);color:var(--gold);font-weight:700}
+
+.form-panel{display:none}.form-panel.active{display:block}
+.form-group{margin-bottom:1rem}
+.form-group label{display:block;font-size:.68rem;color:var(--gold-light);margin-bottom:4px;letter-spacing:1.5px;text-transform:uppercase}
+.form-group input{
+  width:100%;padding:.6rem .85rem;background:rgba(10,14,26,.8);
+  border:1px solid rgba(201,168,76,.2);border-radius:8px;
+  color:var(--sand);font-family:'Nunito',sans-serif;font-size:.9rem;outline:none;transition:border-color .2s;
+}
+.form-group input:focus{border-color:var(--gold)}
+.form-group input::placeholder{color:var(--muted)}
+
+.btn-gold{
+  width:100%;padding:.7rem;border:none;border-radius:8px;
+  background:linear-gradient(135deg,#b8912a,#c9a84c);
+  color:#0a0e1a;font-family:'Cinzel',serif;font-weight:600;font-size:.9rem;
+  cursor:pointer;letter-spacing:1px;transition:transform .15s,box-shadow .2s;margin-top:.3rem;
+}
+.btn-gold:hover{transform:translateY(-1px);box-shadow:0 6px 24px rgba(201,168,76,.35)}
+.btn-gold:active{transform:translateY(0)}
+.btn-gold:disabled{opacity:.5;cursor:not-allowed;transform:none}
+
+.auth-msg{font-size:.78rem;text-align:center;margin-top:.75rem;min-height:1.2rem;padding:.5rem;border-radius:6px}
+.auth-msg.error{background:rgba(196,74,74,.12);color:#e88a8a;border:1px solid rgba(196,74,74,.3)}
+.auth-msg.success{background:rgba(61,184,112,.1);color:#6de0a0;border:1px solid rgba(61,184,112,.25)}
+.auth-msg.info{background:rgba(74,144,196,.1);color:#90c0e8;border:1px solid rgba(74,144,196,.25)}
+
+.retry-btn{
+  width:100%;margin-top:.5rem;padding:.5rem;background:none;
+  border:1px solid rgba(196,74,74,.4);border-radius:8px;
+  color:#e88a8a;font-family:'Nunito',sans-serif;font-size:.82rem;cursor:pointer;transition:background .2s;
+}
+.retry-btn:hover{background:rgba(196,74,74,.12)}
+
+.nile-divider{display:flex;align-items:center;gap:.7rem;margin:.8rem 0;color:var(--muted);font-size:.7rem}
+.nile-divider::before,.nile-divider::after{content:'';flex:1;height:1px;background:var(--border)}
+
+/* ─── APP SCREEN ──────────────────────── */
+#app-screen{flex-direction:row}
+
+/* Sidebar */
+.sidebar{
+  width:230px;min-width:230px;background:var(--panel);
+  display:flex;flex-direction:column;border-right:1px solid var(--border);
+}
+.sidebar-top{
+  padding:.75rem 1rem;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:8px;
+}
+.app-badge{font-family:'Cinzel',serif;color:var(--gold);font-size:.9rem;letter-spacing:1.5px}
+
+.conn-status{
+  margin-left:auto;font-size:.6rem;padding:2px 7px;border-radius:10px;font-weight:700;
+}
+.conn-status.connected{background:rgba(61,184,112,.15);color:var(--online)}
+.conn-status.disconnected{background:rgba(196,74,74,.15);color:#e88a8a}
+
+.sidebar-section{
+  padding:.5rem .8rem .25rem;font-size:.6rem;color:var(--muted);
+  letter-spacing:1.5px;text-transform:uppercase;display:flex;justify-content:space-between;align-items:center;
+}
+.icon-btn{
+  background:none;border:none;color:var(--muted);cursor:pointer;
+  font-size:1rem;padding:0 3px;border-radius:4px;line-height:1;transition:color .15s;
+}
+.icon-btn:hover{color:var(--gold)}
+
+.sb-list{padding:0 .4rem;overflow-y:auto}
+
+.ch-item{
+  display:flex;align-items:center;gap:7px;padding:.38rem .6rem;border-radius:6px;
+  cursor:pointer;color:var(--muted);font-size:.83rem;transition:background .15s,color .15s;margin-bottom:1px;
+}
+.ch-item:hover{background:rgba(201,168,76,.07);color:var(--sand)}
+.ch-item.active{background:rgba(201,168,76,.14);color:var(--gold)}
+.ch-icon{font-size:.85rem}
+
+.fr-item{
+  display:flex;align-items:center;gap:8px;padding:.35rem .6rem;border-radius:6px;
+  cursor:pointer;margin-bottom:1px;transition:background .15s;
+}
+.fr-item:hover{background:rgba(255,255,255,.03)}
+.fr-avatar{
+  width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-size:.75rem;font-weight:700;flex-shrink:0;position:relative;
+}
+.fr-dot{
+  width:8px;height:8px;border-radius:50%;position:absolute;bottom:-1px;right:-1px;
+  border:2px solid var(--panel);
+}
+.fr-dot.on{background:var(--online)}.fr-dot.off{background:#444}
+.fr-name{font-size:.78rem;color:var(--muted);line-height:1.3}
+.fr-name b{display:block;color:var(--sand);font-weight:700;font-size:.8rem}
+
+.sidebar-footer{
+  padding:.65rem .8rem;border-top:1px solid var(--border);
+  display:flex;align-items:center;gap:8px;background:rgba(0,0,0,.2);
+}
+.my-avatar{
+  width:32px;height:32px;border-radius:50%;
+  background:linear-gradient(135deg,#b8912a,#4a90c4);
+  display:flex;align-items:center;justify-content:center;font-size:.85rem;flex-shrink:0;
+}
+.my-info{flex:1;min-width:0}
+.my-uname{font-size:.78rem;font-weight:700;color:var(--sand);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.my-status{font-size:.62rem;color:var(--online)}
+.logout-btn{background:none;border:none;color:var(--muted);cursor:pointer;font-size:.75rem;padding:4px;border-radius:4px;transition:color .15s}
+.logout-btn:hover{color:var(--danger)}
+
+/* Chat */
+.chat{flex:1;display:flex;flex-direction:column;min-width:0;background:var(--deep)}
+.chat-header{
+  padding:.75rem 1.2rem;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:10px;background:var(--water);flex-shrink:0;
+}
+.chat-header .ch-h-name{font-size:.92rem;font-weight:700;color:var(--sand)}
+.chat-header .ch-h-desc{font-size:.72rem;color:var(--muted)}
+
+.messages{
+  flex:1;overflow-y:auto;padding:.8rem 1rem;
+  display:flex;flex-direction:column;gap:1px;
+}
+.no-msgs{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:.5rem;color:var(--muted)}
+.no-msgs .big{font-size:2.5rem}
+.no-msgs p{font-size:.82rem;font-style:italic}
+
+.msg{display:flex;gap:10px;padding:.3rem .5rem;border-radius:6px;transition:background .1s}
+.msg:hover{background:rgba(255,255,255,.02)}
+.msg-av{width:34px;height:34px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.82rem;margin-top:2px}
+.msg-body{flex:1;min-width:0}
+.msg-head{display:flex;align-items:baseline;gap:8px;margin-bottom:2px}
+.msg-author{font-size:.83rem;font-weight:700}
+.msg-time{font-size:.62rem;color:var(--muted)}
+.msg-text{font-size:.875rem;color:#c0c8d8;line-height:1.55;word-break:break-word}
+.msg.grouped .msg-av{visibility:hidden}
+.msg.grouped .msg-head{display:none}
+.msg.grouped{padding-top:1px}
+
+.typing-bar{padding:.2rem 1.5rem;min-height:1.4rem;font-size:.72rem;color:var(--muted);font-style:italic}
+
+.input-wrap{padding:.7rem 1rem 1rem;flex-shrink:0}
+.input-row{
+  display:flex;align-items:center;gap:8px;
+  background:var(--mid);border:1px solid rgba(201,168,76,.18);border-radius:10px;padding:.45rem .75rem;
+}
+.input-row input{
+  flex:1;background:none;border:none;outline:none;color:var(--sand);
+  font-family:'Nunito',sans-serif;font-size:.88rem;
+}
+.input-row input::placeholder{color:var(--muted)}
+.send-btn{background:none;border:none;color:var(--gold);cursor:pointer;font-size:1rem;padding:0 3px;border-radius:4px;transition:transform .15s,color .15s}
+.send-btn:hover{transform:scale(1.2);color:var(--gold-light)}
+
+/* Modal */
+.modal-bg{
+  display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:100;
+  align-items:center;justify-content:center;
+}
+.modal-bg.open{display:flex}
+.modal{
+  background:var(--mid);border:1px solid rgba(201,168,76,.25);border-radius:14px;
+  padding:1.5rem;width:340px;max-width:90vw;
+}
+.modal h3{font-family:'Cinzel',serif;color:var(--gold);margin-bottom:.25rem;font-size:1rem}
+.modal p{font-size:.75rem;color:var(--muted);margin-bottom:.9rem}
+.modal input{
+  width:100%;padding:.55rem .8rem;background:var(--panel);
+  border:1px solid rgba(201,168,76,.2);border-radius:7px;color:var(--sand);
+  font-family:'Nunito',sans-serif;font-size:.88rem;outline:none;margin-bottom:.6rem;
+}
+.modal input:focus{border-color:var(--gold)}
+.modal-row{display:flex;gap:8px}
+.btn-cancel{
+  flex:1;padding:.5rem;background:none;border:1px solid rgba(255,255,255,.1);
+  border-radius:8px;color:var(--muted);cursor:pointer;font-family:'Nunito',sans-serif;font-size:.82rem;transition:all .2s;
+}
+.btn-cancel:hover{background:rgba(255,255,255,.05);color:var(--sand)}
+.btn-confirm{
+  flex:1;padding:.5rem;background:rgba(201,168,76,.12);
+  border:1px solid rgba(201,168,76,.35);border-radius:8px;
+  color:var(--gold);cursor:pointer;font-family:'Cinzel',serif;font-size:.82rem;letter-spacing:.5px;transition:all .2s;
+}
+.btn-confirm:hover{background:rgba(201,168,76,.22)}
+.modal-err{font-size:.72rem;color:#e88a8a;margin:-4px 0 6px;display:none}
+
+/* Scrollbar */
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-thumb{background:rgba(201,168,76,.18);border-radius:4px}
+
+/* Connection overlay */
+.ws-overlay{
+  display:none;position:fixed;inset:0;background:rgba(10,14,26,.85);z-index:200;
+  align-items:center;justify-content:center;flex-direction:column;gap:1rem;
+}
+.ws-overlay.show{display:flex}
+.ws-spinner{width:36px;height:36px;border:3px solid rgba(201,168,76,.2);border-top-color:var(--gold);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.ws-msg{color:var(--muted);font-size:.85rem}
+</style>
+</head>
+<body>
+
+<!-- WS connecting overlay -->
+<div class="ws-overlay" id="ws-overlay">
+  <div class="ws-spinner"></div>
+  <p class="ws-msg" id="ws-msg">Connecting to The Nile...</p>
+</div>
+
+<!-- AUTH SCREEN -->
+<div class="screen active" id="auth-screen">
+  <div style="text-align:center">
+    <div class="auth-logo">𓆣</div>
+    <div class="auth-title">THE NILE</div>
+    <div class="auth-sub">Your private circle, your sacred waters</div>
+    <div class="auth-card">
+      <div class="auth-tabs">
+        <button class="auth-tab active" onclick="switchTab('register')">Register</button>
+        <button class="auth-tab" onclick="switchTab('login')">Login</button>
+      </div>
+
+      <!-- REGISTER -->
+      <div class="form-panel active" id="panel-register">
+        <div class="form-group">
+          <label>Username</label>
+          <input id="r-username" placeholder="pharaoh_of_the_nile" autocomplete="off">
+        </div>
+        <div class="form-group">
+          <label>Email</label>
+          <input id="r-email" type="email" placeholder="you@example.com">
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <input id="r-password" type="password" placeholder="min 8 characters">
+        </div>
+        <button class="btn-gold" id="r-btn" onclick="doRegister()">CROSS THE NILE</button>
+        <div class="auth-msg" id="r-msg" style="display:none"></div>
+        <button class="retry-btn" id="r-retry" onclick="retryRegister()" style="display:none">⟳ Rise from the Waters — Try Again</button>
+      </div>
+
+      <!-- LOGIN -->
+      <div class="form-panel" id="panel-login">
+        <div class="form-group">
+          <label>Username</label>
+          <input id="l-username" autocomplete="username">
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <input id="l-password" type="password" autocomplete="current-password">
+        </div>
+        <button class="btn-gold" id="l-btn" onclick="doLogin()">ENTER THE KINGDOM</button>
+        <div class="auth-msg" id="l-msg" style="display:none"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- APP SCREEN -->
+<div class="screen" id="app-screen">
+  <div class="sidebar">
+    <div class="sidebar-top">
+      <span style="font-size:1rem">𓆣</span>
+      <span class="app-badge">THE NILE</span>
+      <span class="conn-status disconnected" id="conn-badge">●</span>
+    </div>
+
+    <div style="flex:1;overflow-y:auto;display:flex;flex-direction:column">
+      <div class="sidebar-section">
+        Channels
+        <button class="icon-btn" onclick="openNewChannel()" title="New channel">+</button>
+      </div>
+      <div class="sb-list" id="ch-list" style="flex-shrink:0"></div>
+
+      <div class="sidebar-section" style="margin-top:.5rem">
+        Friends
+        <button class="icon-btn" onclick="openAddFriend()" title="Add friend">+</button>
+      </div>
+      <div class="sb-list" id="fr-list" style="flex:1"></div>
+    </div>
+
+    <div class="sidebar-footer">
+      <div class="my-avatar" id="my-av">𓆣</div>
+      <div class="my-info">
+        <div class="my-uname" id="my-uname">—</div>
+        <div class="my-status">● Online</div>
+      </div>
+      <button class="logout-btn" onclick="doLogout()" title="Leave the Nile">✕</button>
+    </div>
+  </div>
+
+  <div class="chat">
+    <div class="chat-header">
+      <span id="ch-hicon" style="font-size:1rem">𓂀</span>
+      <div>
+        <div class="ch-h-name" id="ch-hname">general</div>
+        <div class="ch-h-desc" id="ch-hdesc">A place for everyone</div>
+      </div>
+    </div>
+    <div class="messages" id="messages">
+      <div class="no-msgs"><div class="big">𓆣</div><p>Select a channel to begin</p></div>
+    </div>
+    <div class="typing-bar" id="typing-bar"></div>
+    <div class="input-wrap">
+      <div class="input-row">
+        <input type="text" id="chat-in" placeholder="Write to the sands..." onkeydown="if(event.key==='Enter')sendMsg()">
+        <button class="send-btn" onclick="sendMsg()">➤</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Add Friend Modal -->
+<div class="modal-bg" id="modal-friend">
+  <div class="modal">
+    <h3>𓁿 Invite to the Nile</h3>
+    <p>Enter the username of someone already registered</p>
+    <input type="text" id="friend-in" placeholder="friend_username" onkeydown="if(event.key==='Enter')confirmFriend()">
+    <div class="modal-err" id="friend-err"></div>
+    <div class="modal-row">
+      <button class="btn-cancel" onclick="closeModal('modal-friend')">Cancel</button>
+      <button class="btn-confirm" onclick="confirmFriend()">INVITE</button>
+    </div>
+  </div>
+</div>
+
+<!-- New Channel Modal -->
+<div class="modal-bg" id="modal-channel">
+  <div class="modal">
+    <h3>𓇼 New Channel</h3>
+    <p>Create a new channel in your Nile</p>
+    <input type="text" id="channel-name-in" placeholder="channel-name" onkeydown="if(event.key==='Enter')confirmChannel()">
+    <div class="modal-err" id="channel-err"></div>
+    <div class="modal-row">
+      <button class="btn-cancel" onclick="closeModal('modal-channel')">Cancel</button>
+      <button class="btn-confirm" onclick="confirmChannel()">CREATE</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── State ─────────────────────────────────────────────────────────────────────
+let ws = null;
+let me = null; // {user_id, username, avatar, color}
+let channels = [];
+let friends  = [];
+let activeChannel = null;
+let messages = {}; // {channel_id: [...]}
+let wsReconnectTimer = null;
+
+const CHANNEL_ICONS = ['𓂀','𓇼','𓆣','𓁿','𓃾','𓅓'];
+
+// ── WebSocket ─────────────────────────────────────────────────────────────────
+function connectWS() {
+  if (ws && ws.readyState < 2) return;
+  showOverlay('Connecting to the Nile...');
+  ws = new WebSocket('ws://localhost:8080');
+
+  ws.onopen = () => {
+    hideOverlay();
+    setBadge(true);
+    if (me) {
+      // re-login after reconnect
+      send({type:'login', username: me.username, _pw_hash: me._pw_hash});
+    }
+  };
+
+  ws.onmessage = e => {
+    try { handleMsg(JSON.parse(e.data)); } catch(ex) { console.error(ex); }
+  };
+
+  ws.onclose = () => {
+    setBadge(false);
+    wsReconnectTimer = setTimeout(connectWS, 3000);
+  };
+
+  ws.onerror = () => {
+    showOverlay('Cannot reach the server.\nMake sure nile_server.py is running.');
+  };
+}
+
+function send(obj) {
+  if (ws && ws.readyState === 1) ws.send(JSON.stringify(obj));
+}
+
+function showOverlay(msg) {
+  document.getElementById('ws-overlay').classList.add('show');
+  document.getElementById('ws-msg').textContent = msg;
+}
+function hideOverlay() {
+  document.getElementById('ws-overlay').classList.remove('show');
+}
+
+// ── Message dispatcher ────────────────────────────────────────────────────────
+function handleMsg(msg) {
+  switch (msg.type) {
+    case 'register_result': onRegisterResult(msg); break;
+    case 'login_result':    onLoginResult(msg);    break;
+    case 'channels_list':   onChannelsList(msg);   break;
+    case 'friends_list':    onFriendsList(msg);    break;
+    case 'messages_list':   onMessagesList(msg);   break;
+    case 'new_message':     onNewMessage(msg);     break;
+    case 'add_friend_result': onAddFriendResult(msg); break;
+    case 'channel_created': onChannelCreated(msg); break;
+    case 'user_online':     setFriendOnline(msg.user_id, true);  break;
+    case 'user_offline':    setFriendOnline(msg.user_id, false); break;
+  }
+}
+
+// ── Auth ──────────────────────────────────────────────────────────────────────
+function switchTab(tab) {
+  ['register','login'].forEach(t => {
+    document.querySelector(`.auth-tab:nth-child(${t==='register'?1:2})`).classList.toggle('active', t===tab);
+    document.getElementById(`panel-${t}`).classList.toggle('active', t===tab);
+  });
+}
+
+function showAuthMsg(id, text, cls) {
+  const el = document.getElementById(id);
+  el.textContent = text;
+  el.className = `auth-msg ${cls}`;
+  el.style.display = 'block';
+}
+
+function doRegister() {
+  const u = document.getElementById('r-username').value.trim();
+  const e = document.getElementById('r-email').value.trim();
+  const p = document.getElementById('r-password').value;
+  document.getElementById('r-retry').style.display = 'none';
+  document.getElementById('r-msg').style.display = 'none';
+  if (!u||!e||!p) { showAuthMsg('r-msg','Fill all fields','error'); return; }
+  document.getElementById('r-btn').disabled = true;
+  send({type:'register', username:u, email:e, password:p});
+}
+
+function onRegisterResult(msg) {
+  document.getElementById('r-btn').disabled = false;
+  if (msg.ok) {
+    showAuthMsg('r-msg', '✓ Welcome to The Nile! Logging you in...', 'success');
+    me = {user_id:msg.user_id, username:msg.username, avatar:msg.avatar, color:msg.color};
+    setTimeout(() => doLoginAuto(me.username, document.getElementById('r-password').value), 800);
+  } else {
+    showAuthMsg('r-msg', '𓆣 ' + msg.reason, 'error');
+    document.getElementById('r-retry').style.display = 'block';
+  }
+}
+
+function retryRegister() {
+  document.getElementById('r-retry').style.display = 'none';
+  document.getElementById('r-msg').style.display = 'none';
+  document.getElementById('r-password').value = '';
+  document.getElementById('r-password').focus();
+}
+
+function doLogin() {
+  const u = document.getElementById('l-username').value.trim();
+  const p = document.getElementById('l-password').value;
+  if (!u||!p) { showAuthMsg('l-msg','Enter username and password','error'); return; }
+  document.getElementById('l-btn').disabled = true;
+  send({type:'login', username:u, password:p});
+}
+
+function doLoginAuto(username, password) {
+  send({type:'login', username, password});
+}
+
+function onLoginResult(msg) {
+  document.getElementById('l-btn').disabled = false;
+  if (!msg.ok) { showAuthMsg('l-msg', msg.reason, 'error'); return; }
+  me = {user_id:msg.user_id, username:msg.username, avatar:msg.avatar, color:msg.color};
+  enterApp();
+}
+
+function enterApp() {
+  document.getElementById('auth-screen').classList.remove('active');
+  document.getElementById('app-screen').classList.add('active');
+  document.getElementById('my-av').textContent = me.avatar;
+  document.getElementById('my-uname').textContent = me.username;
+  send({type:'get_channels'});
+  send({type:'get_friends'});
+}
+
+function doLogout() {
+  me = null; channels=[]; friends=[]; messages={}; activeChannel=null;
+  document.getElementById('app-screen').classList.remove('active');
+  document.getElementById('auth-screen').classList.add('active');
+  document.getElementById('ch-list').innerHTML='';
+  document.getElementById('fr-list').innerHTML='';
+  renderMessages([]);
+}
+
+// ── Channels ──────────────────────────────────────────────────────────────────
+function onChannelsList(msg) {
+  channels = msg.channels;
+  renderChannels();
+  if (channels.length && !activeChannel) selectChannel(channels[0]);
+}
+
+function renderChannels() {
+  document.getElementById('ch-list').innerHTML = channels.map(ch => `
+    <div class="ch-item ${activeChannel&&activeChannel.id===ch.id?'active':''}" onclick="selectChannel(${JSON.stringify(ch).replace(/"/g,'&quot;')})">
+      <span class="ch-icon">${ch.icon}</span>${ch.name}
+    </div>`).join('');
+}
+
+function selectChannel(ch) {
+  activeChannel = ch;
+  document.getElementById('ch-hicon').textContent = ch.icon;
+  document.getElementById('ch-hname').textContent = ch.name;
+  document.getElementById('ch-hdesc').textContent = ch.desc || '';
+  renderChannels();
+  if (messages[ch.id]) { renderMessages(messages[ch.id]); }
+  else {
+    document.getElementById('messages').innerHTML = '<div class="no-msgs"><div class="big">𓂀</div><p>Loading...</p></div>';
+    send({type:'get_messages', channel_id: ch.id});
+  }
+}
+
+function onChannelCreated(msg) {
+  channels.push(msg.channel);
+  messages[msg.channel.id] = [];
+  renderChannels();
+  selectChannel(msg.channel);
+}
+
+function openNewChannel() {
+  document.getElementById('channel-name-in').value='';
+  document.getElementById('channel-err').style.display='none';
+  document.getElementById('modal-channel').classList.add('open');
+  setTimeout(()=>document.getElementById('channel-name-in').focus(),50);
+}
+
+function confirmChannel() {
+  const name = document.getElementById('channel-name-in').value.trim();
+  if (!name) { showModalErr('channel-err','Enter a channel name'); return; }
+  const icons = CHANNEL_ICONS;
+  send({type:'create_channel', name, icon: icons[Math.floor(Math.random()*icons.length)], desc:'A new channel in the Nile'});
+  closeModal('modal-channel');
+}
+
+// ── Friends ───────────────────────────────────────────────────────────────────
+function onFriendsList(msg) {
+  friends = msg.friends;
+  renderFriends();
+}
+
+function renderFriends() {
+  document.getElementById('fr-list').innerHTML = friends.map(f => {
+    const bg = hexToRgba(f.color, 0.2);
+    return `
+    <div class="fr-item">
+      <div class="fr-avatar" style="background:${bg};color:${f.color}">
+        ${f.avatar}
+        <div class="fr-dot ${f.online?'on':'off'}"></div>
+      </div>
+      <div class="fr-name"><b>${f.username}</b>${f.online?'Online':'Offline'}</div>
+    </div>`;
+  }).join('');
+}
+
+function setFriendOnline(uid, online) {
+  const f = friends.find(x=>x.id===uid);
+  if (f) { f.online=online; renderFriends(); }
+}
+
+function openAddFriend() {
+  document.getElementById('friend-in').value='';
+  document.getElementById('friend-err').style.display='none';
+  document.getElementById('modal-friend').classList.add('open');
+  setTimeout(()=>document.getElementById('friend-in').focus(),50);
+}
+
+function confirmFriend() {
+  const name = document.getElementById('friend-in').value.trim();
+  if (!name) { showModalErr('friend-err','Enter a username'); return; }
+  send({type:'add_friend', username:name});
+}
+
+function onAddFriendResult(msg) {
+  if (!msg.ok) { showModalErr('friend-err', msg.reason); return; }
+  closeModal('modal-friend');
+  send({type:'get_friends'});
+}
+
+// ── Messages ──────────────────────────────────────────────────────────────────
+function onMessagesList(msg) {
+  messages[msg.channel_id] = msg.messages;
+  if (activeChannel && activeChannel.id === msg.channel_id) renderMessages(msg.messages);
+}
+
+function onNewMessage(msg) {
+  if (!messages[msg.channel_id]) messages[msg.channel_id] = [];
+  messages[msg.channel_id].push(msg);
+  if (activeChannel && activeChannel.id === msg.channel_id) {
+    appendMessage(msg, messages[msg.channel_id].length);
+    scrollBottom();
+  }
+}
+
+function renderMessages(msgs) {
+  const cont = document.getElementById('messages');
+  if (!msgs || !msgs.length) {
+    cont.innerHTML = '<div class="no-msgs"><div class="big">𓆣</div><p>The sands are silent. Be the first to speak.</p></div>';
+    return;
+  }
+  cont.innerHTML = msgs.map((m,i) => buildMsgHTML(m, msgs[i-1], i)).join('');
+  scrollBottom();
+}
+
+function appendMessage(m, idx) {
+  const cont = document.getElementById('messages');
+  const noMsg = cont.querySelector('.no-msgs');
+  if (noMsg) cont.innerHTML = '';
+  const prev = messages[m.channel_id];
+  const prevMsg = prev.length > 1 ? prev[prev.length-2] : null;
+  cont.insertAdjacentHTML('beforeend', buildMsgHTML(m, prevMsg, idx));
+}
+
+function buildMsgHTML(m, prev, idx) {
+  const grouped = prev && prev.author === m.author;
+  const bg = hexToRgba(m.color, 0.18);
+  const ts = formatTime(m.ts);
+  return `
+  <div class="msg ${grouped?'grouped':''}">
+    <div class="msg-av" style="background:${bg};color:${m.color}">${m.avatar}</div>
+    <div class="msg-body">
+      <div class="msg-head">
+        <span class="msg-author" style="color:${m.color}">${m.author}</span>
+        <span class="msg-time">${ts}</span>
+      </div>
+      <div class="msg-text">${escHtml(m.text)}</div>
+    </div>
+  </div>`;
+}
+
+function sendMsg() {
+  if (!activeChannel || !me) return;
+  const inp = document.getElementById('chat-in');
+  const txt = inp.value.trim();
+  if (!txt) return;
+  send({type:'send_message', channel_id: activeChannel.id, content: txt});
+  inp.value = '';
+}
+
+function scrollBottom() {
+  const c = document.getElementById('messages');
+  c.scrollTop = c.scrollHeight;
+}
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+function showModalErr(id, msg) {
+  const el = document.getElementById(id);
+  el.textContent = msg;
+  el.style.display = 'block';
+}
+function setBadge(on) {
+  const b = document.getElementById('conn-badge');
+  b.className = `conn-status ${on?'connected':'disconnected'}`;
+  b.title = on ? 'Connected' : 'Disconnected';
+}
+function hexToRgba(hex, a) {
+  const r = parseInt(hex.slice(1,3),16);
+  const g = parseInt(hex.slice(3,5),16);
+  const b = parseInt(hex.slice(5,7),16);
+  return `rgba(${r},${g},${b},${a})`;
+}
+function escHtml(t) {
+  return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
+}
+function formatTime(ts) {
+  const d = new Date(ts*1000);
+  const now = new Date();
+  const isToday = d.toDateString()===now.toDateString();
+  const hm = d.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+  return isToday ? `Today at ${hm}` : d.toLocaleDateString([],{month:'short',day:'numeric'}) + ' ' + hm;
+}
+
+// ── Keyboard shortcuts ────────────────────────────────────────────────────────
+document.addEventListener('keydown', e => {
+  if (e.key==='Escape') {
+    document.querySelectorAll('.modal-bg.open').forEach(m=>m.classList.remove('open'));
+  }
+});
+document.getElementById('r-password').addEventListener('keydown',e=>{if(e.key==='Enter')doRegister()});
+document.getElementById('l-password').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin()});
+
+// ── Boot ──────────────────────────────────────────────────────────────────────
+connectWS();
+</script>
+</body>
+</html>

@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: the-nile
+    env: python
+    buildCommand: pip install websockets
+    startCommand: python nile_server_render.py
+    envVars:
+      - key: PORT
+        value: 10000
