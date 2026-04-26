@@ -391,7 +391,7 @@ const CHANNEL_ICONS = ['𓂀','𓇼','𓆣','𓁿','𓃾','𓅓'];
 function connectWS() {
   if (ws && ws.readyState < 2) return;
   showOverlay('Connecting to the Nile...');
-  ws = new WebSocket('ws://localhost:8080');
+  ws = new WebSocket('wss://the-nile-production-fcc4.up.railway.app');
 
   ws.onopen = () => {
     hideOverlay();
