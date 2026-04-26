@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>𓆣 The Nile</title>
+<title>New Discord</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
@@ -242,15 +242,15 @@ body{font-family:'Nunito',sans-serif;background:var(--deep);color:var(--sand);he
 <!-- WS connecting overlay -->
 <div class="ws-overlay" id="ws-overlay">
   <div class="ws-spinner"></div>
-  <p class="ws-msg" id="ws-msg">Connecting to The Nile...</p>
+  <p class="ws-msg" id="ws-msg">Connecting to New Discord...</p>
 </div>
 
 <!-- AUTH SCREEN -->
 <div class="screen active" id="auth-screen">
   <div style="text-align:center">
     <div class="auth-logo">𓆣</div>
-    <div class="auth-title">THE NILE</div>
-    <div class="auth-sub">Your private circle, your sacred waters</div>
+    <div class="auth-title">NEW DISCORD</div>
+    <div class="auth-sub">Your private social network</div>
     <div class="auth-card">
       <div class="auth-tabs">
         <button class="auth-tab active" onclick="switchTab('register')">Register</button>
@@ -271,7 +271,7 @@ body{font-family:'Nunito',sans-serif;background:var(--deep);color:var(--sand);he
           <label>Password</label>
           <input id="r-password" type="password" placeholder="min 8 characters">
         </div>
-        <button class="btn-gold" id="r-btn" onclick="doRegister()">CROSS THE NILE</button>
+        <button class="btn-gold" id="r-btn" onclick="doRegister()">CROSS NEW DISCORD</button>
         <div class="auth-msg" id="r-msg" style="display:none"></div>
         <button class="retry-btn" id="r-retry" onclick="retryRegister()" style="display:none">⟳ Rise from the Waters — Try Again</button>
       </div>
@@ -298,7 +298,7 @@ body{font-family:'Nunito',sans-serif;background:var(--deep);color:var(--sand);he
   <div class="sidebar">
     <div class="sidebar-top">
       <span style="font-size:1rem">𓆣</span>
-      <span class="app-badge">THE NILE</span>
+      <span class="app-badge">NEW DISCORD</span>
       <span class="conn-status disconnected" id="conn-badge">●</span>
     </div>
 
@@ -391,7 +391,7 @@ const CHANNEL_ICONS = ['𓂀','𓇼','𓆣','𓁿','𓃾','𓅓'];
 function connectWS() {
   if (ws && ws.readyState < 2) return;
   showOverlay('Connecting to the Nile...');
-  ws = new WebSocket('wss://the-nile-production-fcc4.up.railway.app');
+  ws = new WebSocket('wss://new-discord-production-fcc4.up.railway.app');
 
   ws.onopen = () => {
     hideOverlay();
@@ -473,7 +473,7 @@ function doRegister() {
 function onRegisterResult(msg) {
   document.getElementById('r-btn').disabled = false;
   if (msg.ok) {
-    showAuthMsg('r-msg', '✓ Welcome to The Nile! Logging you in...', 'success');
+    showAuthMsg('r-msg', '✓ Welcome to New Discord! Logging you in...', 'success');
     me = {user_id:msg.user_id, username:msg.username, avatar:msg.avatar, color:msg.color};
     setTimeout(() => doLoginAuto(me.username, document.getElementById('r-password').value), 800);
   } else {
