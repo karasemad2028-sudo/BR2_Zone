@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
+
 import asyncio, json, hashlib, sqlite3, random, os, time
+
 from aiohttp import web, WSMsgType
 
 DB_PATH = "nile.db"
@@ -48,11 +50,11 @@ def init_db():
 def hash_pw(pw): return hashlib.sha256(pw.encode()).hexdigest()
 
 AVATARS = ['𓁿','𓂀','𓃾','𓄿','𓅓','𓆣','𓇼','𓈖']
-COLORS  = ['#c9a84c','#4a90c4','#3a7a5a','#9a6ac4','#c44a6a','#4ac4a8','#c47a4a']
+COLORS = ['#c9a84c','#4a90c4','#3a7a5a','#9a6ac4','#c44a6a','#4ac4a8','#c47a4a']
 REJECTIONS = ['The stars are not aligned — try again','The Nile floods unpredictably. Retry.','Your name echoes strangely in these waters','The papyrus is wet. Wait and try again.']
 
 connected = {}  # ws -> user_id
-user_ws   = {}  # user_id -> ws
+user_ws = {}    # user_id -> ws
 
 async def ws_send(ws, data):
     try: await ws.send_str(json.dumps(data, ensure_ascii=False))
@@ -191,7 +193,13 @@ async def main():
     global HTML_CACHE
     init_db()
     PORT = int(os.environ.get('PORT', 8080))
-    DOMAIN = os.environ.get('RAILWAY_PUBLIC_DOMAIN', f'localhost:{PORT}')
+
+    # ===== التعديل: دعم Koyeb + Railway + localhost =====
+    DOMAIN = os.environ.get('KOYEB_PUBLIC_DOMAIN',
+             os.environ.get('RAILWAY_PUBLIC_DOMAIN',
+             f'localhost:{PORT}'))
+    # =====================================================
+
     WS_URL = f"wss://{DOMAIN}/ws"
 
     html_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'nile_client.html')
@@ -199,12 +207,10 @@ async def main():
         content = f.read()
     HTML_CACHE = content.replace("'ws://localhost:8080'", f"'{WS_URL}'")
 
-    print(f"𓆣 The Nile — http://0.0.0.0:{PORT}  |  WS: {WS_URL}")
-
+    print(f"𓆣 The Nile — http://0.0.0.0:{PORT} | WS: {WS_URL}")
     app = web.Application()
     app.router.add_get('/', serve_html)
     app.router.add_get('/ws', websocket_handler)
-
     runner = web.AppRunner(app)
     await runner.setup()
     site = web.TCPSite(runner, '0.0.0.0', PORT)
