@@ -1,4 +1,4 @@
-app = "the-nile"
+app = "br2-zone-nile"
 primary_region = "cdg"
 
 [build]
